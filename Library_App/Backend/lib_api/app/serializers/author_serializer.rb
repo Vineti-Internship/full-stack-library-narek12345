@@ -3,4 +3,5 @@ class AuthorSerializer < ActiveModel::Serializer
   def booksCount
     object.books.length
   end
+  has_many :books
 end
