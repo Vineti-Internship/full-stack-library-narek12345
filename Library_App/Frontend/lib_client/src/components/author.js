@@ -7,6 +7,9 @@ class Author extends React.Component {
     bookPages: '',
     bookGenre: '',
     bookDesc: '',
+    authorFname:'',
+    authorLname:'',
+    authorEmail:'',
   }
   delHandler = async (id) =>{
     const headers = new Headers();
@@ -25,7 +28,23 @@ class Author extends React.Component {
         this.fetchAuthors()
     }
   }
-  
+  delAuthorHandler = async (id) =>{
+    const headers = new Headers();
+    headers.append('Content-Type','application/json');
+    const options = {
+        method: "DELETE",
+        headers,
+        body:JSON.stringify({
+            id
+        })
+    };
+    const request = new Request(`http://localhost:3000/authors/${id}`,options);
+    const response = await fetch(request);
+    if(response.ok){
+        console.log('deleted succesfully');
+        this.fetchAuthors()
+    }
+  }
   putHandler = async (bookID,authorID,bookName,bookGenre,bookDesc,bookPages) => {
     const headers = new Headers();
     headers.append('Content-Type','application/json');
@@ -47,7 +66,25 @@ class Author extends React.Component {
         this.fetchAuthors()
     }
   }
-
+  postAuthorHandler = async (fName,lName,email) => {
+    const headers = new Headers();
+    headers.append('Content-Type','application/json');
+    const options = {
+        method: "POST",
+        headers,
+        body:JSON.stringify({
+          lName,
+          fName,
+          email
+        })
+    };
+    const request = new Request(`http://localhost:3000/authors/`,options);
+    const response = await fetch(request);
+    if(response.ok){
+        console.log('posted succesfully');
+        this.fetchAuthors()
+    }
+  }
   postHandler = async (authorID,bookName,bookGenre,bookDesc,bookPages) => {
     const headers = new Headers();
     headers.append('Content-Type','application/json');
@@ -91,10 +128,15 @@ class Author extends React.Component {
       <div className="App">
         <header className="App-header">
           <h1>Authors</h1>
+          <input type='text' placeholder='first name' onChange={(e)=>{this.inputHandler(e,'authorFname')}} ></input>
+          <input type='text' placeholder='last name' onChange={(e)=>{this.inputHandler(e,'authorLname')}} ></input>
+          <input type='text' placeholder='email' onChange={(e)=>{this.inputHandler(e,'authorEmail')}}></input>
+          <button onClick={()=>(this.postAuthorHandler(this.state.authorFname,this.state.authorLname,this.state.authorEmail))}>Add an author</button>
           {
             authors.map((author,index) => (
               <div key={index}>
                 <h3>Author: {author.fName} {author.lName}</h3>
+                <button onClick={()=>{this.delAuthorHandler(author.id)}}>Delete</button>
                 <h3>The books of the author </h3>
                 <input type='text' placeholder='book name' onChange={(e)=>{this.inputHandler(e,'bookName')}} ></input>
                 <input type='text' placeholder='book genre' onChange={(e)=>{this.inputHandler(e,'bookGenre')}} ></input>
