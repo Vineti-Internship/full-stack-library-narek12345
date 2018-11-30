@@ -2,7 +2,11 @@ import React from 'react';
 
 class Author extends React.Component {
   state = {
-    authors: []
+    authors: [],
+    bookName: '',
+    bookPages: '',
+    bookGenre: '',
+    bookDesc: '',
   }
   delHandler = async (id) =>{
     const headers = new Headers();
@@ -19,7 +23,7 @@ class Author extends React.Component {
     const status = await response.status;
     if(status === 204){
         console.log('deleted succesfully');
-        this.componentDidMount()
+        this.fetchAuthors()
     }
   }
   postHandler = async (authorID,bookName,bookGenre,bookDesc,bookPages) => {
@@ -41,14 +45,25 @@ class Author extends React.Component {
     const status = await response.status;
     if(status === 201){
         console.log('posted succesfully');
-        this.componentDidMount()
+        this.fetchAuthors()
     }
   }
   async componentDidMount(){
+    this.fetchAuthors();
+  }
+
+  fetchAuthors = async() => {
     const result = await fetch('http://localhost:3000/authors');
     this.setState({authors: await result.json()})
     console.log(this.state)
+  };
+  inputHandler = (e,param) =>{
+    const newState = {};
+    newState[param] = e.target.value;
+    this.setState(newState);
+    console.log(this.state[param]); 
   }
+
   render() {
     const {authors} = this.state;
     return (
@@ -60,11 +75,11 @@ class Author extends React.Component {
               <div key={index}>
                 <h3>Author: {author.fName} {author.lName}</h3>
                 <h3>The books of the author </h3>
-                <input type='text' placeholder='book name' ref="name"></input>
-                <input type='text' placeholder='book genre'></input>
-                <input type='text' placeholder='book description'></input>
-                <input type='text' placeholder='book pages'></input>
-                <button onClick={()=>(this.postHandler(author.id,"posted book","posted genre","posted desc",88))}>Add</button>
+                <input type='text' placeholder='book name' onChange={(e)=>{this.inputHandler(e,'bookName')}} ></input>
+                <input type='text' placeholder='book genre' onChange={(e)=>{this.inputHandler(e,'bookGenre')}} ></input>
+                <input type='text' placeholder='book description' onChange={(e)=>{this.inputHandler(e,'bookDesc')}}></input>
+                <input type='text' placeholder='book pages' onChange={(e)=>{this.inputHandler(e,'bookPages')}}></input>
+                <button onClick={()=>(this.postHandler(author.id,this.state.bookName,this.state.bookGenre,this.state.bookDesc,this.state.bookPages))}>Add</button>
               {
                 author.books.map((book,ind) => (
                   <div key={ind}>
