@@ -20,12 +20,34 @@ class Author extends React.Component {
     };
     const request = new Request(`http://localhost:3000/books/${id}`,options);
     const response = await fetch(request);
-    const status = await response.status;
-    if(status === 204){
+    if(response.ok){
         console.log('deleted succesfully');
         this.fetchAuthors()
     }
   }
+  
+  putHandler = async (bookID,authorID,bookName,bookGenre,bookDesc,bookPages) => {
+    const headers = new Headers();
+    headers.append('Content-Type','application/json');
+    const options = {
+        method: "PUT",
+        headers,
+        body:JSON.stringify({
+            name: bookName,
+            pages: bookPages,
+            genre: bookGenre,
+            description: bookDesc,
+            author_id: authorID
+        })
+    };
+    const request = new Request(`http://localhost:3000/books/${bookID}`,options);
+    const response = await fetch(request);
+    if(response.ok){
+        console.log('updated succesfully');
+        this.fetchAuthors()
+    }
+  }
+
   postHandler = async (authorID,bookName,bookGenre,bookDesc,bookPages) => {
     const headers = new Headers();
     headers.append('Content-Type','application/json');
@@ -42,8 +64,7 @@ class Author extends React.Component {
     };
     const request = new Request('http://localhost:3000/books/',options);
     const response = await fetch(request);
-    const status = await response.status;
-    if(status === 201){
+    if(response.ok){
         console.log('posted succesfully');
         this.fetchAuthors()
     }
@@ -84,7 +105,11 @@ class Author extends React.Component {
                 author.books.map((book,ind) => (
                   <div key={ind}>
                     book{ind+1}
-                    <button>Edit</button>
+                    <input type='text' placeholder='book name' onChange={(e)=>{this.inputHandler(e,'bookName')}} ></input>
+                    <input type='text' placeholder='book genre' onChange={(e)=>{this.inputHandler(e,'bookGenre')}} ></input>
+                    <input type='text' placeholder='book description' onChange={(e)=>{this.inputHandler(e,'bookDesc')}}></input>
+                    <input type='text' placeholder='book pages' onChange={(e)=>{this.inputHandler(e,'bookPages')}}></input>
+                    <button onClick={()=>(this.putHandler(book.id,author.id,this.state.bookName,this.state.bookGenre,this.state.bookDesc,this.state.bookPages))}>Edit</button>
                     <button onClick={()=>(this.delHandler(book.id))}>Remove</button>
                     <h5>name: {book.name}</h5>
                     <h5>genre: {book.genre}</h5>
