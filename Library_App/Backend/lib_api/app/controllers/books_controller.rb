@@ -32,7 +32,6 @@ class BooksController < ApplicationController
       render json: @book.errors, status: :unprocessable_entity
     end
   end
-
   # DELETE /books/1
   def destroy
     @book.destroy

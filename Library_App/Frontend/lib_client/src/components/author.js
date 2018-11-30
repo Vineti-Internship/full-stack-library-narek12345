@@ -10,6 +10,7 @@ class Author extends React.Component {
     authorFname:'',
     authorLname:'',
     authorEmail:'',
+    searchValue:'',
   }
   delHandler = async (id) =>{
     const headers = new Headers();
@@ -120,10 +121,16 @@ class Author extends React.Component {
     newState[param] = e.target.value;
     this.setState(newState);
     console.log(this.state[param]); 
-  }
-
+  };
   render() {
     const {authors} = this.state;
+    let filteredAuthors = authors.filter(
+      (author)=>{
+        console.log(this.state.searchValue)
+          return (author.fName.toLowerCase().includes(this.state.searchValue.toLowerCase())===true)||(author.lName.toLowerCase().includes(this.state.searchValue.toLowerCase())===true);  
+      }
+    )
+    console.log(filteredAuthors);
     return (
       <div className="App">
         <header className="App-header">
@@ -132,10 +139,12 @@ class Author extends React.Component {
           <input type='text' placeholder='last name' onChange={(e)=>{this.inputHandler(e,'authorLname')}} ></input>
           <input type='text' placeholder='email' onChange={(e)=>{this.inputHandler(e,'authorEmail')}}></input>
           <button onClick={()=>(this.postAuthorHandler(this.state.authorFname,this.state.authorLname,this.state.authorEmail))}>Add an author</button>
+          <input type='text' placeholder='search an author' onChange={(e)=>{this.inputHandler(e,'searchValue')}}></input>
           {
-            authors.map((author,index) => (
+            filteredAuthors.map((author,index) => (
               <div key={index}>
                 <h3>Author: {author.fName} {author.lName}</h3>
+                <h3>Email: {author.email}</h3>
                 <button onClick={()=>{this.delAuthorHandler(author.id)}}>Delete</button>
                 <h3>The books of the author </h3>
                 <input type='text' placeholder='book name' onChange={(e)=>{this.inputHandler(e,'bookName')}} ></input>
