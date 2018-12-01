@@ -1,5 +1,6 @@
 import React from 'react';
 import Loader from 'react-loader';
+import { ThemeContext } from '../context/theme'
 
 class Author extends React.Component {
   state = {
@@ -14,6 +15,7 @@ class Author extends React.Component {
     searchValue:'',
     loaded:false
   }
+
   delHandler = async (id) =>{
     const headers = new Headers();
     headers.append('Content-Type','application/json');
@@ -124,8 +126,10 @@ class Author extends React.Component {
     this.setState(newState);
     console.log(this.state[param]); 
   };
+
   render() {
     const {authors} = this.state;
+    let theme = this.context;
     let filteredAuthors = authors.filter(
       (author)=>{
         console.log(this.state.searchValue)
@@ -134,8 +138,9 @@ class Author extends React.Component {
     )
     console.log(filteredAuthors);
     return (
-      <div className="App">
-        <header className="App-header">
+      <ThemeContext.Consumer>
+        {theme => <div>
+        <header className="App-header" style={{backgroundColor: theme.background}}>
         <Loader loaded={this.state.loaded}></Loader>
         <h1>Authors</h1>
           <input type='text' placeholder='first name' onChange={(e)=>{this.inputHandler(e,'authorFname')}} ></input>
@@ -176,8 +181,8 @@ class Author extends React.Component {
             ))
           }
         </header>
-      </div>
-    );
+      </div>}
+      </ThemeContext.Consumer>)
   }
 }
 
