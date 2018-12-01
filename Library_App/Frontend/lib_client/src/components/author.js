@@ -1,4 +1,5 @@
 import React from 'react';
+import Loader from 'react-loader';
 
 class Author extends React.Component {
   state = {
@@ -11,6 +12,7 @@ class Author extends React.Component {
     authorLname:'',
     authorEmail:'',
     searchValue:'',
+    loaded:false
   }
   delHandler = async (id) =>{
     const headers = new Headers();
@@ -113,7 +115,7 @@ class Author extends React.Component {
 
   fetchAuthors = async() => {
     const result = await fetch('http://localhost:3000/authors');
-    this.setState({authors: await result.json()})
+    this.setState({authors: await result.json(),loaded:true})
     console.log(this.state)
   };
   inputHandler = (e,param) =>{
@@ -134,7 +136,8 @@ class Author extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1>Authors</h1>
+        <Loader loaded={this.state.loaded}></Loader>
+        <h1>Authors</h1>
           <input type='text' placeholder='first name' onChange={(e)=>{this.inputHandler(e,'authorFname')}} ></input>
           <input type='text' placeholder='last name' onChange={(e)=>{this.inputHandler(e,'authorLname')}} ></input>
           <input type='text' placeholder='email' onChange={(e)=>{this.inputHandler(e,'authorEmail')}}></input>
